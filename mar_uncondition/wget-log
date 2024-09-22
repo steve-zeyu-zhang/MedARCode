@@ -1,0 +1,101 @@
+--2024-09-18 15:17:08--  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在解析主机 www.dropbox.com (www.dropbox.com)... 2a03:2880:f111:83:face:b00c:0:25de, 209.95.56.60
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:21:29--  (尝试次数： 2)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:25:52--  (尝试次数： 3)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:30:18--  (尝试次数： 4)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:34:43--  (尝试次数： 5)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:39:10--  (尝试次数： 6)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:43:37--  (尝试次数： 7)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:48:05--  (尝试次数： 8)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:52:34--  (尝试次数： 9)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 15:57:03--  (尝试次数：10)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:01:34--  (尝试次数：11)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:06:05--  (尝试次数：12)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:10:35--  (尝试次数：13)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:15:06--  (尝试次数：14)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:19:36--  (尝试次数：15)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:24:06--  (尝试次数：16)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:28:37--  (尝试次数：17)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:33:07--  (尝试次数：18)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:37:37--  (尝试次数：19)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+重试中。
+
+--2024-09-18 16:42:08--  (尝试次数：20)  https://www.dropbox.com/scl/fi/f6dpuyjb7fudzxcyhvrhk/checkpoint-last.pth?rlkey=a6i4bo71vhfo4anp33n9ukujb
+正在连接 www.dropbox.com (www.dropbox.com)|2a03:2880:f111:83:face:b00c:0:25de|:443... 失败：连接超时。
+正在连接 www.dropbox.com (www.dropbox.com)|209.95.56.60|:443... 失败：连接超时。
+放弃操作。
+
