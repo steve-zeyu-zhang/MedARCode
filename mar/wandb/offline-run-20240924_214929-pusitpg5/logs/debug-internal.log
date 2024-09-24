@@ -1,0 +1,18 @@
+{"time":"2024-09-24T21:49:29.813270942+08:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-09-24T21:49:29.81327919+08:00","level":"INFO","msg":"created symlink","path":"/home/zeyuv1/syliu/MedARCode/mar/wandb/offline-run-20240924_214929-pusitpg5/logs/debug-core.log"}
+{"time":"2024-09-24T21:49:29.813293531+08:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-09-24T21:49:29.813294789+08:00","level":"INFO","msg":"created symlink","path":"/home/zeyuv1/syliu/MedARCode/mar/wandb/offline-run-20240924_214929-pusitpg5/logs/debug-core.log"}
+{"time":"2024-09-24T21:49:29.813942811+08:00","level":"INFO","msg":"created new stream","id":"pusitpg5"}
+{"time":"2024-09-24T21:49:29.81395413+08:00","level":"INFO","msg":"stream: started","id":"pusitpg5"}
+{"time":"2024-09-24T21:49:29.813962168+08:00","level":"INFO","msg":"handler: started","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:49:29.813994458+08:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:49:29.814010708+08:00","level":"INFO","msg":"sender: started","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:49:29.918808459+08:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-09-24T21:49:29.967016267+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-09-24T21:51:07.477395011+08:00","level":"INFO","msg":"stream: closing","id":"pusitpg5"}
+{"time":"2024-09-24T21:51:07.477415568+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-09-24T21:51:07.477541106+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-09-24T21:51:07.477630153+08:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:51:07.477642952+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:51:07.477652069+08:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"pusitpg5"}}
+{"time":"2024-09-24T21:51:07.477690065+08:00","level":"INFO","msg":"stream: closed","id":"pusitpg5"}

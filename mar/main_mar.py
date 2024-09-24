@@ -20,7 +20,7 @@ from models.vae import AutoencoderKL
 from models import mar
 from engine_mar import train_one_epoch, evaluate
 import copy
-
+import wandb
 
 def get_args_parser():
     parser = argparse.ArgumentParser('MAR training with Diffusion Loss', add_help=False)
@@ -135,7 +135,17 @@ def get_args_parser():
 
 def main(args):
     misc.init_distributed_mode(args)
+    wandb.init(project="MedAR", 
+            entity="visual-intelligence-laboratory", 
+           # mode="offline",
+            name=f"{args.model}_bs{args.batch_size}_epoch{args.epochs}_conditional")
 
+    wandb.config.update({
+        "learning_rate": args.lr,
+        "batch_size": args.batch_size,
+        "epochs": args.epochs,
+        "unconditional": True
+    })
     print('job dir: {}'.format(os.path.dirname(os.path.realpath(__file__))))
     print("{}".format(args).replace(', ', ',\n'))
 
@@ -308,3 +318,4 @@ if __name__ == '__main__':
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     args.log_dir = args.output_dir
     main(args)
+

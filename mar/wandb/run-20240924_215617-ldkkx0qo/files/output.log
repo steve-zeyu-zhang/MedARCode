@@ -1,0 +1,255 @@
+[21:56:18.370512] job dir: /home/zeyuv1/syliu/MedARCode/mar
+[21:56:18.370652] Namespace(attn_dropout=0.1,
+batch_size=1,
+blr=0.0001,
+buffer_size=64,
+cached_path='',
+cfg=1.0,
+cfg_schedule='linear',
+class_num=1000,
+data_path='/home/zeyuv1/syliu/mar/dataset/imagenette2',
+device='cuda',
+diffloss_d=3,
+diffloss_w=1024,
+diffusion_batch_mul=4,
+dist_backend='nccl',
+dist_on_itp=False,
+dist_url='env://',
+distributed=True,
+ema_rate=0.9999,
+epochs=400,
+eval_bsz=64,
+eval_freq=40,
+evaluate=False,
+gpu=0,
+grad_checkpointing=False,
+grad_clip=3.0,
+img_size=256,
+label_drop_prob=0.1,
+local_rank=-1,
+log_dir='output',
+lr=None,
+lr_schedule='constant',
+mask_ratio_min=0.7,
+min_lr=0.0,
+model='mar_large',
+num_images=50000,
+num_iter=64,
+num_sampling_steps='100',
+num_workers=10,
+online_eval=False,
+output_dir='output',
+patch_size=1,
+pin_mem=True,
+proj_dropout=0.1,
+rank=0,
+resume='output',
+save_last_freq=5,
+seed=1,
+start_epoch=0,
+temperature=1.0,
+use_cached=False,
+vae_embed_dim=16,
+vae_path='pretrained_models/vae/kl16.ckpt',
+vae_stride=16,
+warmup_epochs=100,
+weight_decay=0.02,
+world_size=1)
+[21:56:18.380731] Dataset ImageFolder
+    Number of datapoints: 9469
+    Root location: /home/zeyuv1/syliu/mar/dataset/imagenette2/train
+    StandardTransform
+Transform: Compose(
+               Lambda()
+               RandomHorizontalFlip(p=0.5)
+               ToTensor()
+               Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+           )
+[21:56:18.380907] Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7f4a4e7926a0>
+[21:56:18.464538] Working with z of shape (1, 16, 16, 16) = 4096 dimensions.
+[21:56:18.667370] Loading pre-trained KL-VAE
+[21:56:18.667610] Missing keys:
+[21:56:18.667667] []
+[21:56:18.667718] Unexpected keys:
+[21:56:18.667768] []
+[21:56:18.667816] Restored from pretrained_models/vae/kl16.ckpt
+[21:56:20.707414] Model = MAR(
+  (class_emb): Embedding(1000, 1024)
+  (z_proj): Linear(in_features=16, out_features=1024, bias=True)
+  (z_proj_ln): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+  (encoder_blocks): ModuleList(
+    (0-15): 16 x Block(
+      (norm1): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+      (attn): Attention(
+        (qkv): Linear(in_features=1024, out_features=3072, bias=True)
+        (q_norm): Identity()
+        (k_norm): Identity()
+        (attn_drop): Dropout(p=0.1, inplace=False)
+        (proj): Linear(in_features=1024, out_features=1024, bias=True)
+        (proj_drop): Dropout(p=0.1, inplace=False)
+      )
+      (ls1): Identity()
+      (drop_path1): Identity()
+      (norm2): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+      (mlp): Mlp(
+        (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+        (act): GELU(approximate='none')
+        (drop1): Dropout(p=0.1, inplace=False)
+        (norm): Identity()
+        (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+        (drop2): Dropout(p=0.1, inplace=False)
+      )
+      (ls2): Identity()
+      (drop_path2): Identity()
+    )
+  )
+  (encoder_norm): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+  (decoder_embed): Linear(in_features=1024, out_features=1024, bias=True)
+  (decoder_blocks): ModuleList(
+    (0-15): 16 x Block(
+      (norm1): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+      (attn): Attention(
+        (qkv): Linear(in_features=1024, out_features=3072, bias=True)
+        (q_norm): Identity()
+        (k_norm): Identity()
+        (attn_drop): Dropout(p=0.1, inplace=False)
+        (proj): Linear(in_features=1024, out_features=1024, bias=True)
+        (proj_drop): Dropout(p=0.1, inplace=False)
+      )
+      (ls1): Identity()
+      (drop_path1): Identity()
+      (norm2): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+      (mlp): Mlp(
+        (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+        (act): GELU(approximate='none')
+        (drop1): Dropout(p=0.1, inplace=False)
+        (norm): Identity()
+        (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+        (drop2): Dropout(p=0.1, inplace=False)
+      )
+      (ls2): Identity()
+      (drop_path2): Identity()
+    )
+  )
+  (decoder_norm): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+  (diffloss): DiffLoss(
+    (net): SimpleMLPAdaLN(
+      (time_embed): TimestepEmbedder(
+        (mlp): Sequential(
+          (0): Linear(in_features=256, out_features=1024, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=1024, out_features=1024, bias=True)
+        )
+      )
+      (cond_embed): Linear(in_features=1024, out_features=1024, bias=True)
+      (input_proj): Linear(in_features=16, out_features=1024, bias=True)
+      (res_blocks): ModuleList(
+        (0-2): 3 x ResBlock(
+          (in_ln): LayerNorm((1024,), eps=1e-06, elementwise_affine=True)
+          (mlp): Sequential(
+            (0): Linear(in_features=1024, out_features=1024, bias=True)
+            (1): SiLU()
+            (2): Linear(in_features=1024, out_features=1024, bias=True)
+          )
+          (adaLN_modulation): Sequential(
+            (0): SiLU()
+            (1): Linear(in_features=1024, out_features=3072, bias=True)
+          )
+        )
+      )
+      (final_layer): FinalLayer(
+        (norm_final): LayerNorm((1024,), eps=1e-06, elementwise_affine=False)
+        (linear): Linear(in_features=1024, out_features=32, bias=True)
+        (adaLN_modulation): Sequential(
+          (0): SiLU()
+          (1): Linear(in_features=1024, out_features=2048, bias=True)
+        )
+      )
+    )
+  )
+)
+[21:56:20.708361] Number of trainable parameters: 426.357792M
+[21:56:20.895224] base lr: 1.00e-04
+[21:56:20.895432] actual lr: 3.91e-07
+[21:56:20.895494] effective batch size: 1
+[21:56:20.906296] AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.95)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 3.90625e-07
+    maximize: False
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: False
+    betas: (0.9, 0.95)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 3.90625e-07
+    maximize: False
+    weight_decay: 0.02
+)
+[21:56:20.909455] Training from scratch
+[21:56:20.909613] Start training for 400 epochs
+[21:56:20.910898] log_dir: output
+[21:56:21.613914] Epoch: [0]  [   0/9469]  eta: 1:50:50  lr: 0.000000  loss: 1.7928 (1.7928)  time: 0.7024  data: 0.2229  max mem: 11586
+[21:56:23.357094] Epoch: [0]  [  20/9469]  eta: 0:18:20  lr: 0.000000  loss: 1.7311 (1.8714)  time: 0.0871  data: 0.0001  max mem: 11586
+[21:56:25.100493] Epoch: [0]  [  40/9469]  eta: 0:16:03  lr: 0.000000  loss: 1.4067 (1.8051)  time: 0.0871  data: 0.0001  max mem: 11586
+[21:56:26.850063] Epoch: [0]  [  60/9469]  eta: 0:15:15  lr: 0.000000  loss: 1.4936 (1.7686)  time: 0.0874  data: 0.0001  max mem: 11586
+[21:56:28.592125] Epoch: [0]  [  80/9469]  eta: 0:14:50  lr: 0.000000  loss: 1.6733 (1.7712)  time: 0.0871  data: 0.0001  max mem: 11586
+[21:56:30.336064] Epoch: [0]  [ 100/9469]  eta: 0:14:33  lr: 0.000000  loss: 1.9444 (1.8273)  time: 0.0872  data: 0.0001  max mem: 11586
+[21:56:32.079263] Epoch: [0]  [ 120/9469]  eta: 0:14:22  lr: 0.000000  loss: 1.7129 (1.8068)  time: 0.0871  data: 0.0001  max mem: 11586
+[21:56:33.820037] Epoch: [0]  [ 140/9469]  eta: 0:14:13  lr: 0.000000  loss: 1.9339 (1.8502)  time: 0.0870  data: 0.0001  max mem: 11586
+[21:56:35.564989] Epoch: [0]  [ 160/9469]  eta: 0:14:06  lr: 0.000000  loss: 1.5233 (1.8362)  time: 0.0872  data: 0.0001  max mem: 11586
+[21:56:37.304851] Epoch: [0]  [ 180/9469]  eta: 0:14:01  lr: 0.000000  loss: 1.0355 (1.8186)  time: 0.0870  data: 0.0001  max mem: 11586
+[21:56:39.052139] Epoch: [0]  [ 200/9469]  eta: 0:13:56  lr: 0.000000  loss: 1.7375 (1.8127)  time: 0.0873  data: 0.0001  max mem: 11586
+[21:56:40.798598] Epoch: [0]  [ 220/9469]  eta: 0:13:52  lr: 0.000000  loss: 1.0332 (1.7923)  time: 0.0873  data: 0.0001  max mem: 11586
+[21:56:42.545225] Epoch: [0]  [ 240/9469]  eta: 0:13:48  lr: 0.000000  loss: 1.5159 (1.7931)  time: 0.0873  data: 0.0001  max mem: 11586
+[21:56:44.287495] Epoch: [0]  [ 260/9469]  eta: 0:13:44  lr: 0.000000  loss: 1.6984 (1.7936)  time: 0.0871  data: 0.0001  max mem: 11586
+[21:56:46.001479] [21:56:46.001878] [21:56:46.002038] [21:56:46.002180] [21:56:46.002319] [21:56:46.002461] [21:56:46.002602] [21:56:46.002753] [21:56:46.002898] [21:56:46.003037] [21:56:46.003176] [21:56:46.003315] [21:56:46.003454] [21:56:46.003596] [21:56:46.003738] [21:56:46.003877] [21:56:46.004016]
+Traceback (most recent call last):
+  File "main_mar.py", line 320, in <module>
+    main(args)
+  File "main_mar.py", line 282, in main
+    train_one_epoch(
+  File "/home/zeyuv1/syliu/MedARCode/mar/engine_mar.py", line 69, in train_one_epoch
+    loss = model(x, labels)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1523, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1359, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/zeyuv1/syliu/MedARCode/mar/models/mar.py", line 252, in forward
+    x = self.forward_mae_encoder(x, mask, class_embedding)
+  File "/home/zeyuv1/syliu/MedARCode/mar/models/mar.py", line 201, in forward_mae_encoder
+    x = block(x)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/timm/models/vision_transformer.py", line 165, in forward
+    x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/modules/normalization.py", line 201, in forward
+    return F.layer_norm(
+  File "/home/zeyuv1/miniconda3/envs/mar/lib/python3.8/site-packages/torch/nn/functional.py", line 2546, in layer_norm
+    return torch.layer_norm(input, normalized_shape, weight, bias, eps, torch.backends.cudnn.enabled)
+KeyboardInterrupt

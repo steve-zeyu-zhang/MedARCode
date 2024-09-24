@@ -14,7 +14,7 @@ import numpy as np
 import os
 import copy
 import time
-
+import wandb
 
 def update_ema(target_params, source_params, rate=0.99):
     """
@@ -87,6 +87,12 @@ def train_one_epoch(model, vae,
         metric_logger.update(lr=lr)
 
         loss_value_reduce = misc.all_reduce_mean(loss_value)
+        wandb.log({
+                "loss": loss_value,
+                "lr": optimizer.param_groups[0]["lr"],
+                "epoch": epoch,
+                "step": data_iter_step
+            })
         if log_writer is not None:
             """ We use epoch_1000x as the x-axis in tensorboard.
             This calibrates different curves when batch size changes.
@@ -248,3 +254,4 @@ def cache_latents(vae,
             torch.cuda.synchronize()
 
     return
+
