@@ -290,7 +290,19 @@ def main(args):
             log_writer=log_writer,
             args=args
         )
-
+        if misc.is_main_process() and epoch % 5 == 0:
+            print(f"Evaluating at epoch {epoch}")
+            evaluate(
+                model_without_ddp=model,
+                vae=vae,
+                ema_params=ema_params,
+                args=args,
+                epoch=epoch,
+                batch_size=args.eval_bsz, 
+                log_writer=log_writer,
+                cfg=args.cfg,
+                use_ema=True
+            )
         # save checkpoint
         if epoch % args.save_last_freq == 0 or epoch + 1 == args.epochs:
             misc.save_model(args=args, model=model, model_without_ddp=model_without_ddp, optimizer=optimizer,
@@ -321,4 +333,5 @@ if __name__ == '__main__':
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     args.log_dir = args.output_dir
     main(args)
+
 

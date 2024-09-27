@@ -163,7 +163,7 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
         # generation
         with torch.no_grad():
             with torch.cuda.amp.autocast():
-                sampled_tokens = model_without_ddp.sample_tokens(bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
+                sampled_tokens = model_without_ddp.module.sample_tokens(bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
                                                                  cfg_schedule=args.cfg_schedule,
                                                                  temperature=args.temperature)
                 sampled_images = vae.decode(sampled_tokens / 0.2325)
@@ -223,6 +223,11 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
            postfix = postfix + "_cfg{}".format(cfg)
         log_writer.add_scalar('fid{}'.format(postfix), fid, epoch)
         log_writer.add_scalar('is{}'.format(postfix), inception_score, epoch)
+        wandb.log({
+            'fid{}'.format(postfix): fid,
+            'inception_score{}'.format(postfix): inception_score,
+            'epoch': epoch
+        })
         print("FID: {:.4f}, Inception Score: {:.4f}".format(fid, inception_score))
         # remove temporal saving folder
         shutil.rmtree(save_folder)
@@ -258,5 +263,6 @@ def cache_latents(vae,
             torch.cuda.synchronize()
 
     return
+
 
 
