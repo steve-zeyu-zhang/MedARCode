@@ -135,17 +135,18 @@ def get_args_parser():
 
 def main(args):
     misc.init_distributed_mode(args)
-    wandb.init(project="MedAR", 
-            entity="visual-intelligence-laboratory", 
-            #mode="offline",
-            name=f"{args.model}_bs{args.batch_size}_epoch{args.epochs}_conditional")
+    if misc.is_main_process():
+        wandb.init(project="MedAR", 
+                entity="visual-intelligence-laboratory", 
+                #mode="offline",
+                name=f"{args.model}_bs{args.batch_size}_epoch{args.epochs}_conditional")
 
-    wandb.config.update({
-        "learning_rate": args.lr,
-        "batch_size": args.batch_size,
-        "epochs": args.epochs,
-        "unconditional": False
-    })
+        wandb.config.update({
+            "learning_rate": args.lr,
+            "batch_size": args.batch_size,
+            "epochs": args.epochs,
+            "unconditional": False
+        })
     print('job dir: {}'.format(os.path.dirname(os.path.realpath(__file__))))
     print("{}".format(args).replace(', ', ',\n'))
 
@@ -295,7 +296,6 @@ def main(args):
                 ema_params=ema_params,
                 args=args,
                 epoch=epoch,
-                #batch_size = 16,
                 batch_size=args.eval_bsz, 
                 log_writer=log_writer,
                 cfg=args.cfg,
