@@ -319,7 +319,8 @@ def main(args):
         if misc.is_main_process():
             if log_writer is not None:
                 log_writer.flush()
-
+    if misc.is_main_process():
+        wandb.finish()
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print('Training time {}'.format(total_time_str))
