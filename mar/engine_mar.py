@@ -87,12 +87,13 @@ def train_one_epoch(model, vae,
         metric_logger.update(lr=lr)
 
         loss_value_reduce = misc.all_reduce_mean(loss_value)
-        wandb.log({
-                "loss": loss_value,
-                "lr": optimizer.param_groups[0]["lr"],
-                "epoch": epoch,
-                "step": data_iter_step
-            })
+        if misc.is_main_process():
+            wandb.log({
+                    "loss": loss_value,
+                    "lr": optimizer.param_groups[0]["lr"],
+                    "epoch": epoch,
+                    "step": data_iter_step
+                })
         if log_writer is not None:
             """ We use epoch_1000x as the x-axis in tensorboard.
             This calibrates different curves when batch size changes.
@@ -159,7 +160,7 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
         # generation
         with torch.no_grad():
             with torch.cuda.amp.autocast():
-                sampled_tokens = model_without_ddp.module.sample_tokens(bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
+                sampled_tokens = model_without_ddp.sample_tokens(bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
                                                                  cfg_schedule=args.cfg_schedule, labels=labels_gen,
                                                                  temperature=args.temperature)
                 sampled_images = vae.decode(sampled_tokens / 0.2325)
@@ -219,12 +220,15 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
            postfix = postfix + "_cfg{}".format(cfg)
         log_writer.add_scalar('fid{}'.format(postfix), fid, epoch)
         log_writer.add_scalar('is{}'.format(postfix), inception_score, epoch)
-        wandb.log({
-            'fid{}'.format(postfix): fid,
-            'inception_score{}'.format(postfix): inception_score,
-            'epoch': epoch
-        })
         print("FID: {:.4f}, Inception Score: {:.4f}".format(fid, inception_score))
+        if misc.is_main_process():   
+            wandb.log({
+                'fid{}'.format(postfix): fid,
+                'inception_score{}'.format(postfix): inception_score,
+                'epoch': epoch
+            })
+        # if misc.is_main_process():
+        #     wandb.log({'FID': fid, 'epoch': epoch})
         # remove temporal saving folder
         shutil.rmtree(save_folder)
 
@@ -259,4 +263,5 @@ def cache_latents(vae,
             torch.cuda.synchronize()
 
     return
+
 
