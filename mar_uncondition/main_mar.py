@@ -21,8 +21,16 @@ from models import mar
 from engine_mar import train_one_epoch, evaluate
 import copy
 import wandb
+from torch.utils.data import Subset
 
 
+
+os.environ["NCCL_TIMEOUT"] = "3600"  # 增加超时为 3600 秒
+os.environ["NCCL_P2P_DISABLE"] = "1"  # 禁用 NCCL P2P 通信
+os.environ["NCCL_DEBUG"] = "INFO"  # 启用 NCCL 调试信息
+os.environ["NCCL_ASYNC_ERROR_HANDLING"] = "1"  # 启用异步错误处理
+os.environ["NCCL_BLOCKING_WAIT"] = "1"  # 使用阻塞等待，确保同步
+os.environ["NCCL_ALGO"] = "Tree"  # 改用树形算法
 
 
 
@@ -139,10 +147,11 @@ def get_args_parser():
 
 def main(args):
     misc.init_distributed_mode(args)
+    device = torch.device(args.device)
     if misc.is_main_process():
         wandb.init(project="MedAR", 
                 entity="visual-intelligence-laboratory", 
-               # mode="offline",
+                mode="offline",
                 name=f"{args.model}_bs{args.batch_size}_epoch{args.epochs}_unconditional")
 
         wandb.config.update({
@@ -154,7 +163,7 @@ def main(args):
     print('job dir: {}'.format(os.path.dirname(os.path.realpath(__file__))))
     print("{}".format(args).replace(', ', ',\n'))
 
-    device = torch.device(args.device)
+
 
     # fix the seed for reproducibility
     seed = args.seed + misc.get_rank()
@@ -166,7 +175,7 @@ def main(args):
     num_tasks = misc.get_world_size()
     global_rank = misc.get_rank()
 
-    if global_rank == 0 and args.log_dir is not None:
+    if misc.is_main_process() and args.log_dir is not None:
         os.makedirs(args.log_dir, exist_ok=True)
         log_writer = SummaryWriter(log_dir=args.log_dir)
     else:
@@ -185,6 +194,10 @@ def main(args):
     else:
         dataset_train = datasets.ImageFolder(os.path.join(args.data_path, 'train'), transform=transform_train)
     print(dataset_train)
+
+    subset_size = int(0.2 * len(dataset_train))  # 20% 的样本
+    indices = np.random.choice(len(dataset_train), size=subset_size, replace=False)
+    dataset_train = Subset(dataset_train, indices)
 
     sampler_train = torch.utils.data.DistributedSampler(
         dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
@@ -272,7 +285,8 @@ def main(args):
     # evaluate FID and IS
     if args.evaluate:
         torch.cuda.empty_cache()
-        evaluate(model_without_ddp, vae, ema_params, args, 0, batch_size=args.eval_bsz, log_writer=log_writer,
+        if misc.is_main_process():
+            evaluate(model_without_ddp, vae, ema_params, args, 0, batch_size=args.eval_bsz, log_writer=log_writer,
                  cfg=args.cfg, use_ema=True)
         return
 
@@ -291,8 +305,12 @@ def main(args):
             log_writer=log_writer,
             args=args
         )
-        if misc.is_main_process() and epoch % 5 == 0:
-            print(f"Evaluating at epoch {epoch}")
+        if args.distributed:
+            torch.distributed.barrier()
+        if epoch % 5 == 0:
+            if misc.is_main_process():
+                print(f"Evaluating at epoch {epoch}")
+            torch.cuda.empty_cache()
             evaluate(
                 model_without_ddp=model,
                 vae=vae,
@@ -313,17 +331,16 @@ def main(args):
         if args.online_eval and (epoch % args.eval_freq == 0 or epoch + 1 == args.epochs):
             torch.cuda.empty_cache()
             evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=args.eval_bsz, log_writer=log_writer,
-                     cfg=1.0, use_ema=True)
+                    cfg=1.0, use_ema=True)
             if not (args.cfg == 1.0 or args.cfg == 0.0):
                 evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=args.eval_bsz // 2,
-                         log_writer=log_writer, cfg=args.cfg, use_ema=True)
+                        log_writer=log_writer, cfg=args.cfg, use_ema=True)
             torch.cuda.empty_cache()
 
         if misc.is_main_process():
             if log_writer is not None:
                 log_writer.flush()
-    if misc.is_main_process():
-        wandb.finish()
+
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print('Training time {}'.format(total_time_str))
@@ -335,4 +352,5 @@ if __name__ == '__main__':
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     args.log_dir = args.output_dir
     main(args)
+
 

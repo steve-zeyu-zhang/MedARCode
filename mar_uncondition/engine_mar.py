@@ -116,25 +116,32 @@ def train_one_epoch(model, vae,
     return {k: meter.global_avg for k, meter in metric_logger.meters.items()}
 
 
-def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log_writer=None, cfg=1.0,
-             use_ema=True):
+def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log_writer=None, cfg=1.0, use_ema=True):
+    if not misc.is_main_process():
+        return
+    
     model_without_ddp.eval()
-    num_steps = args.num_images // (batch_size * misc.get_world_size()) + 1
-    save_folder = os.path.join(args.output_dir, "ariter{}-diffsteps{}-temp{}-{}cfg{}-image{}".format(args.num_iter,
-                                                                                                     args.num_sampling_steps,
-                                                                                                     args.temperature,
-                                                                                                     args.cfg_schedule,
-                                                                                                     cfg,
-                                                                                                     args.num_images))
-    if use_ema:
-        save_folder = save_folder + "_ema"
-    if args.evaluate:
-        save_folder = save_folder + "_evaluate"
-    print("Save to:", save_folder)
-    if misc.get_rank() == 0:
-        if not os.path.exists(save_folder):
-            os.makedirs(save_folder)
+    device = torch.device('cuda:0')
+    model_without_ddp.to(device)
+    vae.to(device)
 
+    print(f"Main process starts evaluation.")
+
+    # Calculate images per rank
+    total_images = args.num_images
+    images_per_rank = total_images
+    num_steps = (images_per_rank + batch_size - 1) // batch_size
+
+    save_folder = os.path.join(args.output_dir, "ariter{}-diffsteps{}-temp{}-{}cfg{}-image{}".format(
+        args.num_iter, args.num_sampling_steps, args.temperature, args.cfg_schedule, cfg, args.num_images))
+        
+    if use_ema:
+            save_folder = save_folder + "_ema"
+    if args.evaluate:
+            save_folder = save_folder + "_evaluate"
+    if not os.path.exists(save_folder):
+            os.makedirs(save_folder)
+    print(f"Main process saves to: {save_folder}")
     # switch to ema params
     if use_ema:
         model_state_dict = copy.deepcopy(model_without_ddp.state_dict())
@@ -145,66 +152,62 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
         print("Switch to ema")
         model_without_ddp.load_state_dict(ema_state_dict)
 
-    #class_num = args.class_num
-    #assert args.num_images % class_num == 0  # number of images per class must be the same
-    # class_label_gen_world = np.arange(0, class_num).repeat(args.num_images // class_num)
-    # class_label_gen_world = np.hstack([class_label_gen_world, np.zeros(50000)])
-    world_size = misc.get_world_size()
-    local_rank = misc.get_rank()
     used_time = 0
     gen_img_cnt = 0
 
+
     for i in range(num_steps):
-        print("Generation step {}/{}".format(i, num_steps))
+        current_batch_size = min(batch_size, images_per_rank - gen_img_cnt)
+        if current_batch_size <= 0:
+            break
+
+        print(f"Generation step {i+1}/{num_steps}")
+        start_time = time.time()
+
+                # generation
+        with torch.no_grad():
+                with torch.cuda.amp.autocast():
+                    sampled_tokens = model_without_ddp.module.sample_tokens(
+                        bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
+                        cfg_schedule=args.cfg_schedule, temperature=args.temperature
+                    )
+                    sampled_images = vae.decode(sampled_tokens / 0.2325)
 
 
         torch.cuda.synchronize()
-        start_time = time.time()
+        used_time += time.time() - start_time
+        gen_img_cnt += batch_size
+        print("Generating {} images takes {:.5f} seconds, {:.5f} sec per image".format(
+                gen_img_cnt, used_time, used_time / gen_img_cnt))
 
-        # generation
-        with torch.no_grad():
-            with torch.cuda.amp.autocast():
-                sampled_tokens = model_without_ddp.module.sample_tokens(bsz=batch_size, num_iter=args.num_iter, cfg=cfg,
-                                                                 cfg_schedule=args.cfg_schedule,
-                                                                 temperature=args.temperature)
-                sampled_images = vae.decode(sampled_tokens / 0.2325)
-
-        # measure speed after the first generation batch
-        if i >= 1:
-            torch.cuda.synchronize()
-            used_time += time.time() - start_time
-            gen_img_cnt += batch_size
-            print("Generating {} images takes {:.5f} seconds, {:.5f} sec per image".format(gen_img_cnt, used_time, used_time / gen_img_cnt))
-
-        torch.distributed.barrier()
         sampled_images = sampled_images.detach().cpu()
         sampled_images = (sampled_images + 1) / 2
 
-        # distributed save
         for b_id in range(sampled_images.size(0)):
-            img_id = i * sampled_images.size(0) * world_size + local_rank * sampled_images.size(0) + b_id
+            img_id = i * sampled_images.size(0) * misc.get_world_size() + misc.get_rank() * sampled_images.size(0) + b_id
             if img_id >= args.num_images:
-                break
+                    break
             gen_img = np.round(np.clip(sampled_images[b_id].numpy().transpose([1, 2, 0]) * 255, 0, 255))
             gen_img = gen_img.astype(np.uint8)[:, :, ::-1]
             cv2.imwrite(os.path.join(save_folder, '{}.png'.format(str(img_id).zfill(5))), gen_img)
+    
+    print(f"Main process finished image generation.")
 
-    torch.distributed.barrier()
-    time.sleep(10)
-
+      
     # back to no ema
     if use_ema:
         print("Switch back from ema")
         model_without_ddp.load_state_dict(model_state_dict)
 
     # compute FID and IS
-    if log_writer is not None:
-        if args.img_size == 256:
+
+    if args.img_size == 256:
             input2 = None
             fid_statistics_file = 'fid_stats/adm_in256_stats.npz'
-        else:
+    else:
             raise NotImplementedError
-        metrics_dict = torch_fidelity.calculate_metrics(
+    
+    metrics_dict = torch_fidelity.calculate_metrics(
             input1=save_folder,
             input2=input2,
             fid_statistics_file=fid_statistics_file,
@@ -214,30 +217,31 @@ def evaluate(model_without_ddp, vae, ema_params, args, epoch, batch_size=16, log
             kid=False,
             prc=False,
             verbose=False,
+            fast=False,
         )
-        fid = metrics_dict['frechet_inception_distance']
-        inception_score = metrics_dict['inception_score_mean']
-        postfix = ""
-        if use_ema:
-           postfix = postfix + "_ema"
-        if not cfg == 1.0:
-           postfix = postfix + "_cfg{}".format(cfg)
+    fid = metrics_dict['frechet_inception_distance']
+    inception_score = metrics_dict['inception_score_mean']
+    postfix = ""
+    if use_ema:
+            postfix = postfix + "_ema"
+    if not cfg == 1.0:
+            postfix = postfix + "_cfg{}".format(cfg)
+        
+    if log_writer is not None:
         log_writer.add_scalar('fid{}'.format(postfix), fid, epoch)
         log_writer.add_scalar('is{}'.format(postfix), inception_score, epoch)
-        if misc.is_main_process():   
-            wandb.log({
+
+    if misc.is_main_process():
+        wandb.log({
                 'fid{}'.format(postfix): fid,
                 'inception_score{}'.format(postfix): inception_score,
                 'epoch': epoch
             })
         print("FID: {:.4f}, Inception Score: {:.4f}".format(fid, inception_score))
-        # remove temporal saving folder
+            # remove temporal saving folder
         shutil.rmtree(save_folder)
-
-    torch.distributed.barrier()
-    time.sleep(10)
-
-
+        time.sleep(10)
+    print(f"Main process evaluation completed.")
 def cache_latents(vae,
                   data_loader: Iterable,
                   device: torch.device,
